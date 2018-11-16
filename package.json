@@ -1,0 +1,25 @@
+{
+  "name": "create-next-example-app",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@zeit/next-css": "^1.0.1",
+    "classnames": "^2.2.6",
+    "isomorphic-unfetch": "^3.0.0",
+    "lodash": "^4.17.11",
+    "next": "^7.0.2",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^0.83.0"
+  },
+  "devDependencies": {
+    "css-loader": "^1.0.1",
+    "file-loader": "^2.0.0",
+    "url-loader": "^1.1.2",
+    "webpack": "^4.25.1"
+  }
+}
