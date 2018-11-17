@@ -15,33 +15,7 @@ import {
     Responsive,
 } from 'semantic-ui-react';
 import PropTypes from 'prop-types';
-
-const GuestNav = () => (
-    <Menu.Menu position="right">
-        <Menu.Item name="get-started">Get Started</Menu.Item>
-
-        <Menu.Item name="Help">Help</Menu.Item>
-
-        <Menu.Item name="Sign up">Sign Up</Menu.Item>
-
-        <Menu.Item name="Login">Log In</Menu.Item>
-    </Menu.Menu>
-);
-
-const UserNav = () => (
-    <Menu.Menu position="right">
-        <Menu.Item name="get-started">Get Started</Menu.Item>
-        <Menu.Item name="Help">Help</Menu.Item>
-        <Dropdown item floating pointing="top right">
-            <Dropdown.Menu>
-                <Dropdown.Item>Settings</Dropdown.Item>
-                <Dropdown.Item>Listings</Dropdown.Item>
-                <Dropdown.Item>Account settings</Dropdown.Item>
-                <Dropdown.Item>Logout</Dropdown.Item>
-            </Dropdown.Menu>
-        </Dropdown>
-    </Menu.Menu>
-);
+import Link from 'next/link';
 
 export const MobileSidebar = ({ animation, direction, visible }) => (
     <Sidebar
@@ -52,20 +26,7 @@ export const MobileSidebar = ({ animation, direction, visible }) => (
         style={{ paddingTop: '1em' }}
         vertical
         size="large"
-    >
-        <Menu.Item
-            className="hello"
-            style={{ paddingLeft: '3em', paddingRight: '3em' }}
-        >
-            <Icon name="marker" /> Get Started
-        </Menu.Item>
-        <Menu.Item style={{ paddingLeft: '3em', paddingRight: '3em' }}>
-            <Icon name="lock" /> Login
-        </Menu.Item>
-        <Menu.Item style={{ paddingLeft: '3em', paddingRight: '3em' }}>
-            <Icon name="yahoo" /> Signup
-        </Menu.Item>
-    </Sidebar>
+    />
 );
 
 const TopNav = props => {
@@ -73,6 +34,8 @@ const TopNav = props => {
         <div>
             <Responsive {...Responsive.onlyMobile} as={Menu}>
                 <Menu
+                    inverted
+                    color="teal"
                     size="large"
                     borderless
                     fluid
@@ -83,14 +46,10 @@ const TopNav = props => {
                     }}
                     fixed="top"
                 >
-                    <Menu.Item name="Home">Eventpride</Menu.Item>
+                    <Menu.Item name="Home">Code challenge</Menu.Item>
                     <Menu.Menu position="right">
-                        <Menu.Item onClick={props.toggleMobileSidebar}>
-                            {props.switchIcon ? (
-                                <Icon name="close" />
-                            ) : (
-                                <Icon name="sidebar" />
-                            )}
+                        <Menu.Item>
+                            <Icon name="sidebar" />
                         </Menu.Item>
                     </Menu.Menu>
                 </Menu>
@@ -99,6 +58,8 @@ const TopNav = props => {
             <Grid>
                 <Grid.Column width={16} only="tablet computer">
                     <Menu
+                        inverted
+                        color="teal"
                         size="large"
                         borderless
                         fluid
@@ -109,16 +70,9 @@ const TopNav = props => {
                         }}
                         fixed="top"
                     >
-                        <Menu.Item name="Home">Eventpride</Menu.Item>
-
-                        <Menu.Item name="search" style={{ flexGrow: 3 }}>
-                            <Input
-                                icon="search"
-                                iconPosition="left"
-                                style={{ backgroundColor: 'transparent' }}
-                            />
+                        <Menu.Item name="Home">
+                            <Link href="/">Code Challenge </Link>
                         </Menu.Item>
-                        <GuestNav />
                     </Menu>
                 </Grid.Column>
             </Grid>

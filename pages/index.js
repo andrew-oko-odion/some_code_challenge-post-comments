@@ -1,28 +1,12 @@
 import React, { Fragment } from 'react';
 import Link from 'next/link';
-import Head from '../components/head';
+import Head from 'next/head';
 import Nav from '../components/nav';
-import {
-    Sidebar,
-    Segment,
-    Container,
-    Grid,
-    Image,
-    Header,
-    Button,
-    Icon,
-    Card,
-    Visibility,
-    Sticky,
-    Divider,
-    Menu,
-    Placeholder,
-    Comment,
-} from 'semantic-ui-react';
-import TopNav, { MobileSidebar } from '../components/TopNav';
-import 'semantic-ui-css/semantic.min.css';
+import { Header, Button, Card, Placeholder } from 'semantic-ui-react';
 import truncate from 'lodash/truncate';
 import chunk from 'lodash/chunk';
+import capitalize from 'lodash/capitalize';
+import Layout from '../components/Layout';
 
 var allPost = [
     {
@@ -175,31 +159,8 @@ class Home extends React.Component {
             disableButton: false,
             chunkedPosts: chunked,
             posts: chunked.shift(),
-            calculations: {
-                direction: 'none',
-                height: 0,
-                width: 0,
-                topPassed: false,
-                bottomPassed: false,
-                pixelsPassed: 0,
-                percentagePassed: 0,
-                topVisible: false,
-                bottomVisible: false,
-                fits: false,
-                passing: false,
-                onScreen: false,
-                offScreen: false,
-            },
-
-            // posts: this.state.chunkedPosts.shift(),
         };
-        this.handleContextRef = this.handleContextRef.bind(this);
-        this.handleUpdate = this.handleUpdate.bind(this);
-        console.log(this.state.chunkedPosts);
     }
-
-    handleContextRef = contextRef => this.setState({ contextRef });
-    handleUpdate = (e, { calculations }) => this.setState({ calculations });
 
     handleLoadMoreClick = () => {
         this.setState({ isLoading: true });
@@ -216,127 +177,39 @@ class Home extends React.Component {
             }
         }, 3000);
     };
-
     render() {
-        const { calculations, contextRef, posts, disableButton } = this.state;
+        const { posts, disableButton } = this.state;
         return (
             <React.Fragment>
                 <Head>
-                    <title>Welcome</title>
-                    <meta charSet="utf-8" />
-                    <meta
-                        name="viewport"
-                        content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
-                    />
+                    <title> Code Challenge - All Posts </title>
                 </Head>
-                <TopNav />
-                <div ref={this.handleContextRef} style={{ marginTop: '4em' }}>
-                    <Grid>
-                        <Grid.Column mobile={1} only="mobile tablet" />
-                        <Grid.Column
-                            computer={3}
-                            only="computer"
-                            style={{ marginLeft: '2em' }}
-                        >
-                            <Sticky context={contextRef} offset={60}>
-                                <Segment>
-                                    This is code challenge And honestly I am
-                                    having fun with it. how cool is that
-                                </Segment>
-                            </Sticky>
-                        </Grid.Column>
-                        <Grid.Column computer={8} mobile={14}>
-                            <Visibility
-                                onUpdate={this.handleUpdate}
-                                offset={[20, 10]}
-                            >
-                                {Posts(posts)}
-                                {this.state.isLoading
-                                    ? postLoadingPlaceholder
-                                    : null}
-                                <div>
-                                    <Button
-                                        fluid
-                                        primary
-                                        disabled={disableButton}
-                                        onClick={this.handleLoadMoreClick}
-                                    >
-                                        {disableButton
-                                            ? 'No more Posts'
-                                            : 'Load more (+10)'}
-                                    </Button>
-                                </div>
-                            </Visibility>
-                        </Grid.Column>
-
-                        <Grid.Column computer={4} only="computer">
-                            <Sticky context={contextRef} offset={60}>
-                                <Image src="static/paragraph.png" />
-                                <Divider />
-                                <Image src="static/paragraph.png" />
-                                <Divider />
-                                <Image src="static/paragraph.png" />
-                                <Divider />
-                                <Image src="static/paragraph.png" />
-                                code_challenge <Icon name="copyright" /> 2018
-                            </Sticky>
-                        </Grid.Column>
-
-                        <Grid.Column computer={1} mobile={1} />
-                    </Grid>
-                </div>
-
-                <style jsx>{`
-                    .hero {
-                        width: 100%;
-                        color: #333;
+                <Layout
+                    component={
+                        <div>
+                            {Posts(posts)}
+                            {this.state.isLoading
+                                ? postLoadingPlaceholder
+                                : null}
+                            <div>
+                                <Button
+                                    fluid
+                                    primary
+                                    disabled={disableButton}
+                                    onClick={this.handleLoadMoreClick}
+                                >
+                                    {disableButton
+                                        ? 'No more Posts'
+                                        : 'Show More Posts'}
+                                </Button>
+                            </div>
+                        </div>
                     }
-                    .title {
-                        margin: 0;
-                        width: 100%;
-                        padding-top: 80px;
-                        line-height: 1.15;
-                        font-size: 48px;
-                    }
-                    .title,
-                    .description {
-                        text-align: center;
-                    }
-                    .row {
-                        max-width: 880px;
-                        margin: 80px auto 40px;
-                        display: flex;
-                        flex-direction: row;
-                        justify-content: space-around;
-                    }
-                    .card {
-                        padding: 18px 18px 24px;
-                        width: 220px;
-                        text-align: left;
-                        text-decoration: none;
-                        color: #434343;
-                        border: 1px solid #9b9b9b;
-                    }
-                    .card:hover {
-                        border-color: #067df7;
-                    }
-                    .card h3 {
-                        margin: 0;
-                        color: #067df7;
-                        font-size: 18px;
-                    }
-                    .card p {
-                        margin: 0;
-                        padding: 12px 0 0;
-                        font-size: 13px;
-                        color: #333;
-                    }
-                `}</style>
+                />
             </React.Fragment>
         );
     }
 }
-
 export default Home;
 
 const Posts = chunkedPost =>
@@ -344,23 +217,16 @@ const Posts = chunkedPost =>
         <Card fluid key={index}>
             <Card.Content>
                 <Card.Header>
-                    <Link href={`/show/posts/${item.id}`}>
-                        <a>{item.title}</a>
+                    <Link
+                        as={`/posts/show/id?=${item.id}`}
+                        href={`/show/posts/${item.id}`}
+                    >
+                        <a>{capitalize(item.title)}</a>
                     </Link>
                 </Card.Header>
-                <Card.Meta>
-                    <span className="date">Joined in 2015</span>
-                </Card.Meta>
                 <Card.Description>
-                    {truncate(item.body, { length: 100 })} <br />
-                    {item.id}
+                    {truncate(item.body, { length: 100 })}
                 </Card.Description>
-            </Card.Content>
-            <Card.Content extra>
-                <a>
-                    <Icon name="user" />
-                    22 Friends
-                </a>
             </Card.Content>
         </Card>
     ));

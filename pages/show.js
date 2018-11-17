@@ -1,28 +1,21 @@
 import React, { Fragment } from 'react';
 import Link from 'next/link';
-import Head from '../components/head';
+import Head from 'next/head';
 import Nav from '../components/nav';
+import Layout from '../components/Layout';
 import {
-    Sidebar,
     Segment,
-    Container,
-    Grid,
     Image,
     Header,
     Button,
-    Icon,
-    Card,
-    Visibility,
-    Sticky,
     Divider,
     Menu,
     Placeholder,
     Comment,
 } from 'semantic-ui-react';
-import TopNav, { MobileSidebar } from '../components/TopNav';
-import 'semantic-ui-css/semantic.min.css';
 import truncate from 'lodash/truncate';
 import chunk from 'lodash/chunk';
+import capitalize from 'lodash/capitalize';
 
 var pulledComments = [
     {
@@ -76,16 +69,17 @@ var post = {
 };
 
 pulledComments = pulledComments.reverse();
-var chunkedComments = chunk(pulledComments, 3);
 
 class Show extends React.Component {
     constructor(props) {
         super(props);
+        const chunkedComments = chunk(pulledComments, 3);
         this.state = {
             comments: chunkedComments.shift(),
             chunkedComments: chunkedComments,
             isLoading: false,
             disableButton: false,
+            postTitle: post.title,
             postBody: post.body,
         };
     }
@@ -109,47 +103,61 @@ class Show extends React.Component {
     };
 
     render() {
-        const { isLoading, disableButton, comments, postBody } = this.state;
+        const {
+            isLoading,
+            disableButton,
+            comments,
+            postTitle,
+            postBody,
+        } = this.state;
         return (
             <React.Fragment>
-                <TopNav />
-                <Segment>
-                    <p> Cool Post </p>
-                    <p> Cool Post </p>
-                    <p> Cool Post </p>
-                    {postBody}
-                    {postComments(comments)}
-                    {isLoading ? commentsPlaceholder : null}
-                    <Button
-                        primary
-                        disabled={disableButton}
-                        onClick={this.loadMoreComments}
-                    >
-                        {disableButton
-                            ? 'No More comments'
-                            : 'load more comments (+3)'}
-                    </Button>
-                </Segment>
+                <Head>
+                    <title>{`Posts and Comments - ${postTitle}`}</title>
+                    <meta charSet="utf-8" />
+                    <meta
+                        name="viewport"
+                        content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+                    />
+                </Head>
+                <Layout
+                    component={
+                        <div>
+                            <Segment size="large">
+                                <Header as="h2">{capitalize(postTitle)}</Header>
+                                <div>{postBody}</div>
+                            </Segment>
+                            <Segment size="tiny">
+                                <Header as="h5"> Comments </Header>
+                                {postComments(comments)}
+                                {isLoading ? commentsPlaceholder : null}
+                            </Segment>
+                            <div>
+                                <Button
+                                    primary
+                                    disabled={disableButton}
+                                    onClick={this.loadMoreComments}
+                                >
+                                    {disableButton
+                                        ? 'No More comments'
+                                        : 'Show More comments'}
+                                </Button>
+                            </div>
+                        </div>
+                    }
+                />
             </React.Fragment>
         );
     }
 }
-
 export default Show;
 
-const postComments = comments =>
-    comments.map(item => (
+const postComments = comment =>
+    comment.map(item => (
         <Comment.Group>
             <Comment>
                 <Comment.Content>
-                    <Comment.Author>{item.name}</Comment.Author>
-                    <Comment.Metadata>
-                        <div>2 days ago</div>
-                        <div>
-                            <Icon name="star" />5 Faves
-                        </div>
-                    </Comment.Metadata>
-                    {item.id}
+                    <Comment.Author>{capitalize(item.name)}</Comment.Author>
                     <Comment.Text>{item.body}</Comment.Text>
                 </Comment.Content>
             </Comment>
