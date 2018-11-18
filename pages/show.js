@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
-import Nav from '../components/nav';
 import Layout from '../components/Layout';
+import fetch from 'isomorphic-unfetch';
 import {
     Segment,
     Image,
@@ -13,74 +13,37 @@ import {
     Placeholder,
     Comment,
 } from 'semantic-ui-react';
-import truncate from 'lodash/truncate';
 import chunk from 'lodash/chunk';
 import capitalize from 'lodash/capitalize';
-
-var pulledComments = [
-    {
-        postId: 1,
-        id: 1,
-        name: 'id labore ex et quam laborum',
-        email: 'Eliseo@gardner.biz',
-        body:
-            'laudantium enim quasi est quidem magnam voluptate ipsam eos\ntempora quo necessitatibus\ndolor quam autem quasi\nreiciendis et nam sapiente accusantium',
-    },
-    {
-        postId: 1,
-        id: 2,
-        name: 'quo vero reiciendis velit similique earum',
-        email: 'Jayne_Kuhic@sydney.com',
-        body:
-            'est natus enim nihil est dolore omnis voluptatem numquam\net omnis occaecati quod ullam at\nvoluptatem error expedita pariatur\nnihil sint nostrum voluptatem reiciendis et',
-    },
-    {
-        postId: 1,
-        id: 3,
-        name: 'odio adipisci rerum aut animi',
-        email: 'Nikita@garfield.biz',
-        body:
-            'quia molestiae reprehenderit quasi aspernatur\naut expedita occaecati aliquam eveniet laudantium\nomnis quibusdam delectus saepe quia accusamus maiores nam est\ncum et ducimus et vero voluptates excepturi deleniti ratione',
-    },
-    {
-        postId: 1,
-        id: 4,
-        name: 'alias odio sit',
-        email: 'Lew@alysha.tv',
-        body:
-            'non et atque\noccaecati deserunt quas accusantium unde odit nobis qui voluptatem\nquia voluptas consequuntur itaque dolor\net qui rerum deleniti ut occaecati',
-    },
-    {
-        postId: 1,
-        id: 5,
-        name: 'vero eaque aliquid doloribus et culpa',
-        email: 'Hayden@althea.biz',
-        body:
-            'harum non quasi et ratione\ntempore iure ex voluptates in ratione\nharum architecto fugit inventore cupiditate\nvoluptates magni quo et',
-    },
-];
-
-var post = {
-    userId: 2,
-    id: 14,
-    title: 'voluptatem eligendi optio',
-    body:
-        'fuga et accusamus dolorum perferendis illo voluptas\nnon doloremque neque facere\nad qui dolorum molestiae beatae\nsed aut voluptas totam sit illum',
-};
-
-pulledComments = pulledComments.reverse();
+import { ErrorMessage } from './index.js';
 
 class Show extends React.Component {
+    static async getInitialProps(context) {
+        try {
+            const { id } = context.query;
+            const commentRes = await fetch(
+                `https://jsonplaceholder.typicode.com/posts/${id}/comments`
+            );
+            const res = await fetch(
+                `https://jsonplaceholder.typicode.com/posts/${id}`
+            );
+            const post = await res.json();
+            const comments = await commentRes.json();
+            console.log(comments);
+            return { post: post, comments: comments.reverse() };
+        } catch (error) {
+            return { error: 'There was some error on the request' };
+        }
+    }
+
     constructor(props) {
         super(props);
-        const chunkedComments = chunk(pulledComments, 3);
+        const chunkedComments = chunk(this.props.comments, 3);
         this.state = {
             comments: chunkedComments.shift(),
             chunkedComments: chunkedComments,
             isLoading: false,
             disableButton: false,
-            postTitle: post.title,
-            postBody: post.body,
         };
     }
 
@@ -103,17 +66,15 @@ class Show extends React.Component {
     };
 
     render() {
-        const {
-            isLoading,
-            disableButton,
-            comments,
-            postTitle,
-            postBody,
-        } = this.state;
+        const { isLoading, disableButton, comments } = this.state;
         return (
             <React.Fragment>
                 <Head>
-                    <title>{`Posts and Comments - ${postTitle}`}</title>
+                    <title>
+                        {this.props.post
+                            ? `Posts and Comments - ${this.props.post.title}`
+                            : 'Error in Request'}
+                    </title>
                     <meta charSet="utf-8" />
                     <meta
                         name="viewport"
@@ -122,28 +83,39 @@ class Show extends React.Component {
                 </Head>
                 <Layout
                     component={
-                        <div>
-                            <Segment size="large">
-                                <Header as="h2">{capitalize(postTitle)}</Header>
-                                <div>{postBody}</div>
-                            </Segment>
-                            <Segment size="tiny">
-                                <Header as="h5"> Comments </Header>
-                                {postComments(comments)}
-                                {isLoading ? commentsPlaceholder : null}
-                            </Segment>
-                            <div>
-                                <Button
-                                    primary
-                                    disabled={disableButton}
-                                    onClick={this.loadMoreComments}
-                                >
-                                    {disableButton
-                                        ? 'No More comments'
-                                        : 'Show More comments'}
-                                </Button>
-                            </div>
-                        </div>
+                        <React.Fragment>
+                            {this.props.error ? (
+                                <ErrorMessage />
+                            ) : (
+                                <React.Fragment>
+                                    <Segment size="large">
+                                        <Header as="h2">
+                                            {capitalize(this.props.post.title)}
+                                        </Header>
+                                        <div>{this.props.post.body}</div>
+                                    </Segment>
+                                    <Segment size="tiny">
+                                        <Header as="h5"> Comments </Header>
+                                        {comments.length <= 0
+                                            ? null
+                                            : postComments(comments)}
+                                        {isLoading ? commentsPlaceholder : null}
+                                    </Segment>
+                                    <Button
+                                        primary
+                                        disabled={disableButton}
+                                        onClick={this.loadMoreComments}
+                                    >
+                                        {disableButton
+                                            ? 'No More comments'
+                                            : 'Show More comments'}
+                                    </Button>
+                                    <Button floated="right">
+                                        <Link href="/">Back to Homepage</Link>
+                                    </Button>
+                                </React.Fragment>
+                            )}
+                        </React.Fragment>
                     }
                 />
             </React.Fragment>
@@ -153,19 +125,29 @@ class Show extends React.Component {
 export default Show;
 
 const postComments = comment =>
-    comment.map(item => (
-        <Comment.Group>
+    comment.map((item, index) => (
+        <Comment.Group key={index}>
             <Comment>
                 <Comment.Content>
+                    <React.Fragment>
+                        <div />
+                        <div className="comment-id"> {item.id} </div>
+                    </React.Fragment>
                     <Comment.Author>{capitalize(item.name)}</Comment.Author>
                     <Comment.Text>{item.body}</Comment.Text>
                 </Comment.Content>
+                <style jsx>{`
+                    .comment-id {
+                        float: right;
+                        opacity: 0.5;
+                    }
+                `}</style>
             </Comment>
         </Comment.Group>
     ));
 
 const commentsPlaceholder = [...Array(3).keys()].map((item, index) => (
-    <Comment.Group>
+    <Comment.Group key={index}>
         <Comment>
             <Comment.Content>
                 <Comment.Author>

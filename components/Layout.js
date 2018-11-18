@@ -2,7 +2,6 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
 import Head from 'next/head';
-import Nav from '../components/nav';
 import { Grid, Segment, Visibility, Sticky } from 'semantic-ui-react';
 import TopNav from '../components/TopNav';
 import 'semantic-ui-css/semantic.min.css';
@@ -53,15 +52,21 @@ class Layout extends React.Component {
                         background: #e9ebee;
                         font: 17px menlo;
                     }
+                    .main {
+                        margin-top: 4em;
+                    }
+                    .left-item {
+                        margin-left: 2em;
+                    }
                 `}</style>
                 <TopNav />
-                <div ref={this.handleContextRef} style={{ marginTop: '4em' }}>
+                <div ref={this.handleContextRef} className="main">
                     <Grid>
                         <Grid.Column mobile={1} only="mobile tablet" />
                         <Grid.Column
                             computer={3}
                             only="computer"
-                            style={{ marginLeft: '2em' }}
+                            className="left-item"
                         >
                             <Sticky context={contextRef} offset={60}>
                                 <Segment>

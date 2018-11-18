@@ -1,37 +1,18 @@
 import React, { Fragment, Component } from 'react';
-import {
-    Menu,
-    Dropdown,
-    Container,
-    Icon,
-    Sidebar,
-    Header,
-    Segment,
-    Grid,
-    Divider,
-    Image,
-    Input,
-    Search,
-    Responsive,
-} from 'semantic-ui-react';
-import PropTypes from 'prop-types';
+import { Menu, Grid, Responsive, Icon } from 'semantic-ui-react';
 import Link from 'next/link';
-
-export const MobileSidebar = ({ animation, direction, visible }) => (
-    <Sidebar
-        as={Menu}
-        animation="overlay"
-        direction="top"
-        visible={visible}
-        style={{ paddingTop: '1em' }}
-        vertical
-        size="large"
-    />
-);
-
+import Head from 'next/head';
 const TopNav = props => {
     return (
         <div>
+            <style jsx global>{`
+                .menu-style {
+                    border-radius: 0em;
+                    padding-left: 2em;
+                    padding-right: 2em;
+                }
+            `}</style>
+
             <Responsive {...Responsive.onlyMobile} as={Menu}>
                 <Menu
                     inverted
@@ -39,11 +20,7 @@ const TopNav = props => {
                     size="large"
                     borderless
                     fluid
-                    style={{
-                        borderRadius: '0em',
-                        paddingLeft: '2em',
-                        paddingRight: '2em',
-                    }}
+                    className="menu-style"
                     fixed="top"
                 >
                     <Menu.Item name="Home">Code challenge</Menu.Item>
@@ -63,11 +40,7 @@ const TopNav = props => {
                         size="large"
                         borderless
                         fluid
-                        style={{
-                            borderRadius: '0em',
-                            paddingLeft: '2em',
-                            paddingRight: '2em',
-                        }}
+                        className="menu-style"
                         fixed="top"
                     >
                         <Menu.Item name="Home">
@@ -81,8 +54,3 @@ const TopNav = props => {
 };
 
 export default TopNav;
-
-TopNav.propTypes = {
-    switchIcon: PropTypes.bool.isRequired,
-    toggleMobileSidebar: PropTypes.func.isRequired,
-};

@@ -1,13 +1,13 @@
 {
   "name": "create-next-example-app",
   "scripts": {
-    "dev": "next",
+    "dev": "node server.js",
     "build": "next build",
-    "start": "next start"
+    "start": "NODE_ENV=production node server.js"
   },
   "dependencies": {
     "@zeit/next-css": "^1.0.1",
-    "classnames": "^2.2.6",
+    "express": "^4.16.4",
     "isomorphic-unfetch": "^3.0.0",
     "lodash": "^4.17.11",
     "next": "^7.0.2",
