@@ -15,7 +15,6 @@ class Home extends React.Component {
                 `https://jsonplaceholder.typicode.com/posts`
             );
             const posts = await res.json();
-            console.log(posts.reverse());
             return { posts: posts };
         } catch (error) {
             return { error: 'There was some error' };

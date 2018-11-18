@@ -29,7 +29,6 @@ class Show extends React.Component {
             );
             const post = await res.json();
             const comments = await commentRes.json();
-            console.log(comments);
             return { post: post, comments: comments.reverse() };
         } catch (error) {
             return { error: 'There was some error on the request' };
